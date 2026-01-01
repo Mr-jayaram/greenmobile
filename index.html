@@ -2,263 +2,268 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iShop - Interactive Mobile UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>iShop - Slim Bezel Edition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --ios-blue: #007aff;
             --ios-bg: #f2f2f7;
+            --bezel-color: #000000; /* Deep black for the slim border */
+            --island-color: #000;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; }
-        
-        body { 
-            background-color: #333; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-        }
-
-        /* IPHONE FRAME */
-        .phone {
-            width: 375px;
-            height: 812px;
-            background: #000;
-            border: 12px solid #1c1c1c;
-            border-radius: 50px;
-            position: relative;
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-
-        /* LOADER */
-        #loader {
-            position: absolute;
-            inset: 0;
-            background: #000;
-            z-index: 100;
+            background-color: #0a0a0a; /* Darker background to make the device pop */
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease;
-        }
-        .apple-logo { color: white; font-size: 80px; margin-bottom: 30px; }
-        .progress-wire { width: 140px; height: 3px; background: #333; border-radius: 2px; }
-        .progress-fill { width: 0%; height: 100%; background: white; animation: fill 2s forwards; }
-        @keyframes fill { to { width: 100%; } }
-
-        /* HOME SCREEN */
-        #home-screen {
-            height: 100%;
-            background: url('https://images.unsplash.com/photo-1557683316-973673baf926') center/cover;
-            padding: 50px 20px;
-            transition: transform 0.4s ease;
         }
 
-        /* STATUS BAR */
+        * { box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; }
+
+        /* --- THE DEVICE CONTAINER (Updated for Slim Border) --- */
+        .device {
+            position: relative;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            /* Razor thin outer glow to define the edge */
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 30px 60px rgba(0,0,0,0.8);
+        }
+
+        /* DESKTOP VIEW: Ultra Slim 1px Border */
+        @media (min-width: 1025px) {
+            .device {
+                width: 99%;
+                height: 96%;
+                border-radius: 20px;
+                border: 1px solid var(--bezel-color);
+            }
+            .dynamic-island { display: none; }
+            .status-bar { padding: 0 30px !important; }
+            .app-grid { max-width: 1100px !important; margin: 80px auto !important; }
+        }
+
+        /* MOBILE VIEW: Very Slim 3px Border */
+        @media (max-width: 1024px) {
+            .device {
+                width: 100%;
+                height: 100%;
+                border: 3px solid var(--bezel-color); /* SET VERY SLIM */
+                border-radius: 40px;
+            }
+            .app-grid { max-width: 420px !important; margin: 40px auto !important; }
+        }
+
+        /* --- DYNAMIC ISLAND --- */
+        .dynamic-island {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 30px;
+            background: var(--island-color);
+            border-radius: 20px;
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* --- STATUS BAR --- */
         .status-bar {
             position: absolute;
-            top: 0; width: 100%;
+            top: 0;
+            width: 100%;
+            height: 50px;
             display: flex;
             justify-content: space-between;
-            padding: 15px 30px;
+            align-items: center;
+            padding: 0 40px;
             color: white;
             font-size: 14px;
-            font-weight: 600;
-            z-index: 10;
+            font-weight: 500;
+            z-index: 900;
         }
 
-        /* APP GRID */
+        /* --- HOME SCREEN --- */
+        .home-screen {
+            flex: 1;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop') center/cover;
+            padding-top: 50px;
+            position: relative;
+        }
+
+        /* --- APP GRID --- */
         .app-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            margin-top: 40px;
+            padding: 20px;
+            justify-items: center;
         }
+
         .app {
             display: flex;
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            color: white;
-            font-size: 11px;
+            width: 80px;
         }
+
         .icon {
-            width: 60px;
-            height: 60px;
+            width: 62px;
+            height: 62px;
             border-radius: 14px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 30px;
-            margin-bottom: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 28px;
+            margin-bottom: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
         }
 
-        /* APP CONTENT SECTIONS */
+        .app:active .icon { transform: scale(0.92); }
+        .app span { color: white; font-size: 11px; font-weight: 500; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+        /* --- CENTERED DOCK --- */
+        .dock-container {
+            position: absolute;
+            bottom: 25px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dock {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 10px 18px;
+            border-radius: 28px;
+            display: flex;
+            gap: 12px;
+            border: 0.5px solid rgba(255,255,255,0.2);
+        }
+
+        .dock-item {
+            width: 58px;
+            height: 58px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+            transition: transform 0.2s;
+        }
+
+        /* --- PAGE OVERLAY --- */
         .page {
             position: absolute;
-            top: 100%; /* Hidden below */
+            top: 100%;
             left: 0;
             width: 100%;
             height: 100%;
             background: var(--ios-bg);
-            z-index: 50;
-            transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 60px 20px;
+            z-index: 1500;
+            transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 80px 30px;
         }
         .page.active { top: 0; }
-        .back-btn {
-            color: var(--ios-blue);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-        .content-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
 
-        /* DOCK */
-        .dock {
-            position: absolute;
-            bottom: 20px;
-            left: 15px;
-            right: 15px;
-            height: 85px;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-        .dock-item { width: 55px; height: 55px; background: white; border-radius: 13px; display: flex; justify-content: center; align-items: center; font-size: 24px; color: #333;}
-
-        /* BOTTOM BAR */
-        .home-indicator {
+        .home-bar {
             position: absolute;
             bottom: 8px;
             left: 50%;
             transform: translateX(-50%);
             width: 120px;
-            height: 5px;
-            background: rgba(255,255,255,0.7);
+            height: 4px;
+            background: rgba(255,255,255,0.9);
             border-radius: 10px;
-            z-index: 60;
-            cursor: pointer;
+            z-index: 2000;
         }
-        .page .home-indicator { background: #000; }
     </style>
 </head>
 <body>
 
-<div class="phone">
-    <div id="loader">
-        <i class="fab fa-apple apple-logo"></i>
-        <div class="progress-wire"><div class="progress-fill"></div></div>
-    </div>
+<div class="device">
+    <div id="island" class="dynamic-island"></div>
 
     <div class="status-bar">
-        <span>9:41</span>
-        <div><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></div>
+        <span id="time">9:41</span>
+        <div>
+            <i class="fas fa-signal"></i> &nbsp;
+            <i class="fas fa-wifi"></i> &nbsp;
+            <i class="fas fa-battery-full"></i>
+        </div>
     </div>
 
-    <div id="home-screen">
+    <div class="home-screen">
         <div class="app-grid">
-            <div class="app" onclick="openPage('shop')">
-                <div class="icon" style="background: linear-gradient(#54d8ff, #007aff)"><i class="fas fa-shopping-cart"></i></div>
-                <span>Shop</span>
+            <div class="app" onclick="openPage('shop-page')">
+                <div class="icon" style="background: #007aff; color: white;"><i class="fas fa-shopping-bag"></i></div>
+                <span>iShop</span>
             </div>
-            <div class="app" onclick="openPage('services')">
-                <div class="icon" style="background: linear-gradient(#ffcc00, #ff9500)"><i class="fas fa-tools"></i></div>
-                <span>Services</span>
+            <div class="app">
+                <div class="icon" style="background: #fff; color: #ff9500;"><i class="fas fa-tools"></i></div>
+                <span>Support</span>
             </div>
-            <div class="app" onclick="openPage('contact')">
-                <div class="icon" style="background: linear-gradient(#4cd964, #28a745)"><i class="fas fa-phone-alt"></i></div>
+            <div class="app">
+                <div class="icon" style="background: #4cd964; color: white;"><i class="fas fa-envelope"></i></div>
                 <span>Contact</span>
             </div>
+            <div class="app">
+                <div class="icon" style="background: #1c1c1e; color: white;"><i class="fas fa-cog"></i></div>
+                <span>Settings</span>
+            </div>
         </div>
 
-        <div class="dock">
-            <div class="dock-item"><i class="fas fa-envelope"></i></div>
-            <div class="dock-item" style="background: #4cd964; color:white;"><i class="fas fa-phone"></i></div>
-            <div class="dock-item"><i class="fas fa-compass"></i></div>
-            <div class="dock-item"><i class="fas fa-music"></i></div>
+        <div class="dock-container">
+            <div class="dock">
+                <div class="dock-item" style="background: #4cd964; color: white;"><i class="fas fa-phone"></i></div>
+                <div class="dock-item" style="background: #007aff; color: white;"><i class="fas fa-comment"></i></div>
+                <div class="dock-item" style="background: white; color: #007aff;"><i class="fas fa-globe"></i></div>
+                <div class="dock-item" style="background: linear-gradient(#ff2d55, #ff5e3a); color: white;"><i class="fas fa-music"></i></div>
+            </div>
         </div>
     </div>
 
-    <div id="shop" class="page">
-        <div class="back-btn" onclick="closePage()"><i class="fas fa-chevron-left"></i> Home</div>
-        <h2>iPhone Models</h2>
-        <div class="content-card">
-            <h3>iPhone 15 Pro</h3>
-            <p>Titanium. So strong. So light.</p>
-            <p><strong>$999</strong></p>
-        </div>
-        <div class="content-card">
-            <h3>iPhone 15</h3>
-            <p>New camera. New design. New wow.</p>
-            <p><strong>$799</strong></p>
-        </div>
+    <div id="shop-page" class="page">
+        <h2 onclick="closePage()" style="color:var(--ios-blue); cursor:pointer;"><i class="fas fa-chevron-left"></i> Home</h2>
+        <h1 style="margin-top:20px;">Store</h1>
+        <p>Premium slim bezel interface activated.</p>
     </div>
 
-    <div id="services" class="page">
-        <div class="back-btn" onclick="closePage()"><i class="fas fa-chevron-left"></i> Home</div>
-        <h2>Our Services</h2>
-        <div class="content-card">
-            <h4><i class="fas fa-hammer"></i> Screen Repair</h4>
-            <p>Fast screen replacement in 1 hour.</p>
-        </div>
-        <div class="content-card">
-            <h4><i class="fas fa-battery-quarter"></i> Battery Service</h4>
-            <p>Genuine Apple battery replacement.</p>
-        </div>
-    </div>
-
-    <div id="contact" class="page">
-        <div class="back-btn" onclick="closePage()"><i class="fas fa-chevron-left"></i> Home</div>
-        <h2>Contact Us</h2>
-        <div class="content-card">
-            <p><i class="fas fa-map-marker-alt"></i> 1 Infinite Loop, Cupertino, CA</p>
-            <p><i class="fas fa-phone"></i> +1 800-MY-APPLE</p>
-            <p><i class="fas fa-envelope"></i> support@ishop.com</p>
-        </div>
-    </div>
-
-    <div class="home-indicator" onclick="closePage()"></div>
+    <div class="home-bar" onclick="closePage()"></div>
 </div>
 
 <script>
-    // Handle Loader
-    window.onload = () => {
-        setTimeout(() => {
-            document.getElementById('loader').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-            }, 500);
-        }, 2200);
-    };
-
-    // Navigation Logic
     function openPage(id) {
-        // Close any currently open pages first
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        // Open the selected page
         document.getElementById(id).classList.add('active');
+        const island = document.getElementById('island');
+        island.style.width = "180px";
+        setTimeout(() => island.style.width = "110px", 400);
     }
 
     function closePage() {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     }
+
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('time').innerText = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
 </script>
 
 </body>
